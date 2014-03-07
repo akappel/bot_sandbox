@@ -12,9 +12,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DllEntry.h" />
+    <ClInclude Include="PathPlanner.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GotoBot.cpp" />
+    <ClCompile Include="PathPlanner.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{220D23DC-16E1-4899-96D4-4E03748BE7ED}</ProjectGuid>

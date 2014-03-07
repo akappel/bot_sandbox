@@ -32,6 +32,11 @@ void dllmonsteraction(const float dt,
 		}
 	}
 
+	// TODO Move def of enemy outside of function, changeEnemy when previous enemy is dead
+	// TODO create list for pather
+	// TODO Pass list to instance of PathPlanner class
+	// TODO Act upon list
+
 	//2. Calc desired velocity to enemy
 	vec2 desiredVel = Normalize(pClosestEnemy->pos - mEnt.pos) * MAX_ENT_SPEED;
 	mEnt.moveDirection += desiredVel;

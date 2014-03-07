@@ -14,9 +14,15 @@
     <ClInclude Include="DllEntry.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="PathPlanner.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GotoBot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PathPlanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
