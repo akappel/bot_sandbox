@@ -6,6 +6,12 @@
 #include <windows.h>
 #include <time.h>
 #include <algorithm>
+#include <list>
+#include "PathPlanner.h"
+
+//Pointer for current Enemy
+sOtherEnts *pCurrentEnemy = NULL;
+std::list<vec2> path;
 
 void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColor,float));
 
@@ -15,30 +21,23 @@ void dllmonsteraction(const float dt,
 					  const sWorldInfo &mWorldInfo, 
 					  void (*DrawLine)(vec2,vec2,vColor,float))
 {
-	//Fresh start, silly thought
-
-	/*
-		Use seek steer to make bot chase closest bot
-	*/
-
-	sOtherEnts *pClosestEnemy = &mWorldInfo.pOtherEnts[0];
-
-	//1. Find closest enemy
-	for (int i = 0; i < mWorldInfo.iNumOtherEnts; i++) {
-		if (mWorldInfo.pOtherEnts[i].type == TYPE_ENEMY) {
-			if (SquaredLength(mWorldInfo.pOtherEnts[i].pos) <= SquaredLength(pClosestEnemy->pos)) {
-				pClosestEnemy = &mWorldInfo.pOtherEnts[i];
-			}
-		}
+	//Initial instantiation of pointer to nearest enemy
+	if (pCurrentEnemy == NULL) {
+		FindNewEnemy(pCurrentEnemy, mEnt, mWorldInfo);
 	}
 
-	// TODO Move def of enemy outside of function, changeEnemy when previous enemy is dead
-	// TODO create list for pather
-	// TODO Pass list to instance of PathPlanner class
-	// TODO Act upon list
+	//Checks if the enemy is dead(?), finds new nearest enemy
+	if (pCurrentEnemy->bIsInvincible == TRUE) {
+		FindNewEnemy(pCurrentEnemy, mEnt, mWorldInfo);
+	}
+	
+	//Implementation of our path planner
+	PathPlanner pathPlanner = PathPlanner::PathPlanner(mWorldInfo);
+	pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
+	// TODO Implement A* search class, act on its choices of nodes
 
 	//2. Calc desired velocity to enemy
-	vec2 desiredVel = Normalize(pClosestEnemy->pos - mEnt.pos) * MAX_ENT_SPEED;
+	vec2 desiredVel = Normalize(pCurrentEnemy->pos - mEnt.pos) * MAX_ENT_SPEED;
 	mEnt.moveDirection += desiredVel;
 	
 	//Set direction to face
@@ -217,4 +216,22 @@ void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColo
 		}
 	}
 	*/
+}
+
+void FindNewEnemy(sOtherEnts *pCurrentEnemy, const sEntInfo &mEnt, const sWorldInfo &mWorldInfo) {
+	if (pCurrentEnemy == NULL) {
+		pCurrentEnemy = &mWorldInfo.pOtherEnts[0];
+	}
+	else {
+		double currentLen = Length(pCurrentEnemy->pos - mEnt.pos);
+		for (int i = 0; i < mWorldInfo.iNumOtherEnts; i++) {
+			if (mWorldInfo.pOtherEnts[i].type == TYPE_ENEMY) {
+				double temp = Length(mWorldInfo.pOtherEnts[i].pos - mEnt.pos);
+				if (temp < currentLen) {
+					pCurrentEnemy = &mWorldInfo.pOtherEnts[i];
+					currentLen = temp;
+				}
+			}
+		}
+	}
 }
