@@ -36,7 +36,6 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//Create an instance of the A* search class to search for a path between
 	//the closest node to the bot and the closest node to the target position.
 	//This A* search will utilize the Euclidean straight heuristic
-	//TODO Finish GetClosestNodeToPosition function
 	// TODO Begin work on A* class
 	
 }
@@ -69,4 +68,29 @@ bool PathPlanner::doNodesIntersectCircle(vec2 curPos, double BoundingRadius) con
 
 	return false;
 
+}
+
+int PathPlanner::GetClosestNodeToPosition(vec2 pos) const {
+	//This method currently runs at O(n^2). From what the book was saying,
+	//we can speed this up with BSP, or some other sort of partioning work
+	int closestNode = no_closest_node_found;
+	double sq_len = 0.0;
+
+	//This particular code should include exception handling for not getting
+	//correct node information
+	if (closestNode == no_closest_node_found) {
+		closestNode = mWorldInfo.pPathNodes[0].nodeIndex;
+		sq_len = SquaredLength(mWorldInfo.pPathNodes[0].vPos - pos);
+	}
+
+	for (int i = 1; i < mWorldInfo.iNumPathNodes; i++) {
+		double temp = SquaredLength(mWorldInfo.pPathNodes[i].vPos - pos);
+		if (temp < sq_len) {
+			//Set node index, sq_len
+			closestNode = mWorldInfo.pPathNodes[i].nodeIndex;
+			sq_len = temp;
+		}
+	}
+
+	return closestNode;
 }
