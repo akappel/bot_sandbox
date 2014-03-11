@@ -11,10 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AStar.h" />
     <ClInclude Include="DllEntry.h" />
     <ClInclude Include="PathPlanner.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AStar.cpp" />
     <ClCompile Include="GotoBot.cpp" />
     <ClCompile Include="PathPlanner.cpp" />
   </ItemGroup>

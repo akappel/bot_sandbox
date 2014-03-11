@@ -34,10 +34,12 @@ void dllmonsteraction(const float dt,
 	}
 	
 	//Implementation of our path planner
-	pathPlanner.mEnt = &mEnt;
-	pathPlanner.mWorldInfo = &mWorldInfo;
+	pathPlanner.pEnt = &mEnt;
+	pathPlanner.pWorldInfo = &mWorldInfo;
+
+	// TODO Encapsulate CreatePathToPosition call in dt accumulator
+	//so that it only generates a new path every second (or half-second)
 	pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
-	// TODO Implement A* search class, act on its choices of nodes
 
 	//2. Calc desired velocity to enemy
 	vec2 desiredVel = Normalize(pCurrentEnemy->pos - mEnt.pos) * MAX_ENT_SPEED;

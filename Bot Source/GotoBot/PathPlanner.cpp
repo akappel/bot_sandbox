@@ -12,7 +12,7 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//if the bot can move directly to the target location without the need
 	//for planning a path.
 	//mEnt->fRadius is broken, using hard value of 4.099 (from enemy npc radius)
-	if (!isPathObstructed(mEnt->pos, TargetPos, 4.099)) {
+	if (!isPathObstructed(pEnt->pos, TargetPos, 4.099)) {
 		path.push_back(TargetPos);
 		return true;
 	}
@@ -21,7 +21,7 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//NAV GRAPH ATM) nodes to determine the closest unobstructed node to the given
 	//position vector. It is used here to find the closest unobstructed node
 	//to the bot's current location.
-	int ClosestNodeToBot = GetClosestNodeToPosition(mEnt->pos);
+	int ClosestNodeToBot = GetClosestNodeToPosition(pEnt->pos);
 
 	//If no visible node found return failure.
 	if (ClosestNodeToBot == no_closest_node_found) {
@@ -61,9 +61,9 @@ bool PathPlanner::isPathObstructed(vec2 A, vec2 B, double BoundingRadius) const 
 }
 
 bool PathPlanner::doNodesIntersectCircle(vec2 curPos, double BoundingRadius) const {	
-	for (int i = 0; i < mWorldInfo->iNumPathNodes; i++) {
+	for (int i = 0; i < pWorldInfo->iNumPathNodes; i++) {
 		//Determine distance from node to curPos
-		double dist = SquaredLength(mWorldInfo->pPathNodes[i].vPos - curPos);
+		double dist = SquaredLength(pWorldInfo->pPathNodes[i].vPos - curPos);
 		if (dist < BoundingRadius * BoundingRadius) {
 			return true;
 		}
@@ -82,15 +82,15 @@ int PathPlanner::GetClosestNodeToPosition(vec2 pos) const {
 	//This particular code should include exception handling for not getting
 	//correct node information
 	if (closestNode == no_closest_node_found) {
-		closestNode = mWorldInfo->pPathNodes[0].nodeIndex;
-		sq_len = SquaredLength(mWorldInfo->pPathNodes[0].vPos - pos);
+		closestNode = pWorldInfo->pPathNodes[0].nodeIndex;
+		sq_len = SquaredLength(pWorldInfo->pPathNodes[0].vPos - pos);
 	}
 
-	for (int i = 1; i < mWorldInfo->iNumPathNodes; i++) {
-		double temp = SquaredLength(mWorldInfo->pPathNodes[i].vPos - pos);
+	for (int i = 1; i < pWorldInfo->iNumPathNodes; i++) {
+		double temp = SquaredLength(pWorldInfo->pPathNodes[i].vPos - pos);
 		if (temp < sq_len) {
 			//Set node index, sq_len
-			closestNode = mWorldInfo->pPathNodes[i].nodeIndex;
+			closestNode = pWorldInfo->pPathNodes[i].nodeIndex;
 			sq_len = temp;
 		}
 	}

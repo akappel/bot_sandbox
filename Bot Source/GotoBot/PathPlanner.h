@@ -1,4 +1,5 @@
 #include "DllEntry.h"
+#include "AStar.h"
 #include <list>
 
 class PathPlanner {
@@ -24,11 +25,11 @@ private:
 
 public:
 	//a pointer to the owner of this class aka mEnt
-	sEntInfo *mEnt;
+	sEntInfo *pEnt;
 
 	//In the book, it says a reference to a navgraph. I will use a reference to
 	//mWorldInfo for now.
-	const sWorldInfo *mWorldInfo;
+	const sWorldInfo *pWorldInfo;
 
 	//For now, we will only have a connection to our mWorldInfo. Later we'll implement
 	//the actual bot.
