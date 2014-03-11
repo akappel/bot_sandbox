@@ -8,13 +8,6 @@ private:
 	enum {no_closest_node_found = -1};
 
 private:
-	//a pointer to the owner of this class aka mEnt
-	sEntInfo *mEnt;
-
-	//In the book, it says a reference to a navgraph. I will use a reference to
-	//mWorldInfo for now.
-	const sWorldInfo &mWorldInfo;
-
 	//Position the bot wishes to plan a path to reach
 	vec2 vDestPos;
 
@@ -30,10 +23,17 @@ private:
 	bool doNodesIntersectCircle(vec2 curPos, double BoundingRadius) const;
 
 public:
-	
+	//a pointer to the owner of this class aka mEnt
+	sEntInfo *mEnt;
+
+	//In the book, it says a reference to a navgraph. I will use a reference to
+	//mWorldInfo for now.
+	const sWorldInfo *mWorldInfo;
+
 	//For now, we will only have a connection to our mWorldInfo. Later we'll implement
 	//the actual bot.
-	PathPlanner(const sWorldInfo &mWorldInfo);
+	PathPlanner(){}
+	PathPlanner(sEntInfo &mEnt, const sWorldInfo &mWorldInfo);
 
 	//Finds the least cost path between the agent's pos and the target
 	//pos. Fills path with a list of waypoints if the search is successful

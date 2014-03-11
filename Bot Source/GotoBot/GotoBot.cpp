@@ -11,9 +11,11 @@
 
 //Pointer for current Enemy
 sOtherEnts *pCurrentEnemy = NULL;
+PathPlanner pathPlanner;
 std::list<vec2> path;
 
 void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColor,float));
+sOtherEnts *FindNewEnemy(sOtherEnts *pCurrentEnemy, const sEntInfo &mEnt, const sWorldInfo &mWorldInfo);
 
 extern "C" __declspec(dllexport)
 void dllmonsteraction(const float dt, 
@@ -23,7 +25,7 @@ void dllmonsteraction(const float dt,
 {
 	//Initial instantiation of pointer to nearest enemy
 	if (pCurrentEnemy == NULL) {
-		FindNewEnemy(pCurrentEnemy, mEnt, mWorldInfo);
+		pCurrentEnemy = FindNewEnemy(pCurrentEnemy, mEnt, mWorldInfo);
 	}
 
 	//Checks if the enemy is dead(?), finds new nearest enemy
@@ -32,7 +34,8 @@ void dllmonsteraction(const float dt,
 	}
 	
 	//Implementation of our path planner
-	PathPlanner pathPlanner = PathPlanner::PathPlanner(mWorldInfo);
+	pathPlanner.mEnt = &mEnt;
+	pathPlanner.mWorldInfo = &mWorldInfo;
 	pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
 	// TODO Implement A* search class, act on its choices of nodes
 
@@ -218,20 +221,21 @@ void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColo
 	*/
 }
 
-void FindNewEnemy(sOtherEnts *pCurrentEnemy, const sEntInfo &mEnt, const sWorldInfo &mWorldInfo) {
+sOtherEnts *FindNewEnemy(sOtherEnts *pCurrentEnemy, const sEntInfo &mEnt, const sWorldInfo &mWorldInfo) {
+
 	if (pCurrentEnemy == NULL) {
 		pCurrentEnemy = &mWorldInfo.pOtherEnts[0];
 	}
-	else {
-		double currentLen = Length(pCurrentEnemy->pos - mEnt.pos);
-		for (int i = 0; i < mWorldInfo.iNumOtherEnts; i++) {
-			if (mWorldInfo.pOtherEnts[i].type == TYPE_ENEMY) {
-				double temp = Length(mWorldInfo.pOtherEnts[i].pos - mEnt.pos);
-				if (temp < currentLen) {
-					pCurrentEnemy = &mWorldInfo.pOtherEnts[i];
-					currentLen = temp;
-				}
+	double currentLen = Length(pCurrentEnemy->pos - mEnt.pos);
+	for (int i = 0; i < mWorldInfo.iNumOtherEnts; i++) {
+		if (mWorldInfo.pOtherEnts[i].type == TYPE_ENEMY) {
+			double temp = Length(mWorldInfo.pOtherEnts[i].pos - mEnt.pos);
+			if (temp < currentLen) {
+				pCurrentEnemy = &mWorldInfo.pOtherEnts[i];
+				currentLen = temp;
 			}
 		}
 	}
+
+	return pCurrentEnemy;
 }
