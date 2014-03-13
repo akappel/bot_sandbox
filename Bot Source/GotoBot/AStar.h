@@ -1,16 +1,18 @@
 #include "DllEntry.h"
 #include <list>
+#include <map>
 
 class AStar {
 private:
 	//Pointer to world info for nodes
 	const sWorldInfo *pWorldInfo;
 	//Storage of ClosestNodeToBot ClosestNodeToTarget
-	int cNodeToBot, cNodeToTarget;
+	int closestNodeToBot, closestNodeToTarget;
 	//List of path, to be returned
 	std::list<int> pathOfNodeIndices;
 
 private:
+	//A* star method; places path into pathOfNodeIndices list
 	void Search();
 
 public:
@@ -19,4 +21,8 @@ public:
 
 	//Simple return function for generated path
 	std::list<int> GetPathToTarget();
+
+	//Dictionary for node pointers, based on their index ids
+	//Can this not be a const??
+	std::map<int, sPathNode*> INDEX_NODE_POINTERS;
 };

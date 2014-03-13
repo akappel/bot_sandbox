@@ -37,9 +37,21 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//Create an instance of the A* search class to search for a path between
 	//the closest node to the bot and the closest node to the target position.
 	//This A* search will utilize the Euclidean straight heuristic
-	// TODO Begin work on A* class
+	
+	AStar astar(*pWorldInfo, ClosestNodeToBot, ClosestNodeToTarget);
+	std::list<int> pathIndices = astar.GetPathToTarget();
 
-	return false; //For now
+	//Convert to indices to vectors
+	if (!pathIndices.empty()){
+		for (std::list<int>::const_iterator nodeIndex = pathIndices.begin(), end = pathIndices.end(); nodeIndex != end; ++nodeIndex) {
+			path.push_back(astar.INDEX_NODE_POINTERS[(*nodeIndex)]->vPos);
+		}
+		path.push_back(TargetPos);
+	}
+	else {
+		return false;
+	}
+	
 	
 }
 

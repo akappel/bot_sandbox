@@ -11,8 +11,13 @@
 
 //Pointer for current Enemy
 sOtherEnts *pCurrentEnemy = NULL;
+
+
 PathPlanner pathPlanner;
 std::list<vec2> path;
+
+float accum = 0.0f;
+bool firstPass = true;
 
 void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColor,float));
 sOtherEnts *FindNewEnemy(sOtherEnts *pCurrentEnemy, const sEntInfo &mEnt, const sWorldInfo &mWorldInfo);
@@ -39,16 +44,27 @@ void dllmonsteraction(const float dt,
 
 	// TODO Encapsulate CreatePathToPosition call in dt accumulator
 	//so that it only generates a new path every second (or half-second)
-	pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
-
-	//2. Calc desired velocity to enemy
-	vec2 desiredVel = Normalize(pCurrentEnemy->pos - mEnt.pos) * MAX_ENT_SPEED;
-	mEnt.moveDirection += desiredVel;
-	
-	//Set direction to face
-	if (SquaredLength(mEnt.vel) > 0.00000001) {
-		mEnt.aimDirection = Normalize(mEnt.vel);
+	accum += dt;
+	if (accum > 30.0f) {
+		pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
+		accum = dt;
 	}
+	else if (firstPass == true) {
+		pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
+		firstPass = false;
+	}
+
+	if (!(SquaredLength(path.front() - mEnt.pos) < 1.0f)) {
+		//2. Calc desired velocity to node
+		vec2 desiredVel = Normalize(path.front() - mEnt.pos) * MAX_ENT_SPEED;
+		mEnt.moveDirection += desiredVel;
+	}
+	else {
+		//Remove front node when we've arrived
+		path.pop_front();
+	}
+	
+	// TODO Set direction to face
 
 	//Set next command
 	mEnt.nextCommand = OP_SHOOT_FIREBALL;
@@ -228,7 +244,7 @@ sOtherEnts *FindNewEnemy(sOtherEnts *pCurrentEnemy, const sEntInfo &mEnt, const 
 	if (pCurrentEnemy == NULL) {
 		pCurrentEnemy = &mWorldInfo.pOtherEnts[0];
 	}
-	double currentLen = Length(pCurrentEnemy->pos - mEnt.pos);
+	double currentLen = 5000.0f;
 	for (int i = 0; i < mWorldInfo.iNumOtherEnts; i++) {
 		if (mWorldInfo.pOtherEnts[i].type == TYPE_ENEMY) {
 			double temp = Length(mWorldInfo.pOtherEnts[i].pos - mEnt.pos);
