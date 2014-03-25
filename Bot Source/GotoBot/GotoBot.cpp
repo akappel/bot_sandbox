@@ -32,7 +32,7 @@ void dllmonsteraction(const float dt,
 	}
 
 	//Checks if the enemy is dead(?), finds new nearest enemy
-	if (pCurrentEnemy->bIsInvincible) {
+	if (pCurrentEnemy->bIsPenalty) {
 		FindNewEnemy(pCurrentEnemy, mEnt, mWorldInfo);
 	}
 	
@@ -43,7 +43,7 @@ void dllmonsteraction(const float dt,
 	}
 	
 	accum += dt;
-	if (accum > 120.0f) {
+	if (accum > 30.0f) {
 		path.clear();
 		pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
 		accum = 0.0f;
@@ -55,7 +55,7 @@ void dllmonsteraction(const float dt,
 	}
 	
 	if (!path.empty()) {
-		if (pow(path.front().x - mEnt.pos.x, 2) + pow(path.front().y - mEnt.pos.y, 2) > pow(4.0999, 2)) {
+		if (pow(path.front().x - mEnt.pos.x, 2) + pow(path.front().y - mEnt.pos.y, 2) > 1) {
 			//Calc desired velocity to node
 			vec2 desiredVel = Normalize(pCurrentEnemy->pos - mEnt.pos) * MAX_ENT_SPEED;
 			mEnt.moveDirection += desiredVel;

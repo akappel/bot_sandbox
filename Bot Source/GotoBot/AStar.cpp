@@ -17,10 +17,6 @@ AStar::AStar(const sWorldInfo &mWorldInfo, int CNTB, int CNTT) :
 void AStar::Search() {
 	//The meat and potatoes. Will be following tutorial and code hosted here:
 	//http://www.policyalmanac.org/games/aStarTutorial.htm
-
-	if (!pathOfNodeIndices.empty()){
-		pathOfNodeIndices.clear();
-	}
 	
 	//First we will create our openlist, our "closed list" is pathOfNodeIndices
 	std::list<int> openList;
@@ -32,6 +28,10 @@ void AStar::Search() {
 	std::map<int, int> nodeFScore;
 	std::map<int, bool> inClosedList;
 
+	//used while  finding lowest cost node
+	int lowestCostNode;
+
+	//Init bool map to false
 	for (int i = 0; i < pWorldInfo->iNumPathNodes; i++){
 		inClosedList[pWorldInfo->pPathNodes[i].nodeIndex] = false;
 	}
@@ -49,8 +49,8 @@ void AStar::Search() {
 		pathOfNodeIndices.push_back(closestNodeToBot);
 	}
 	else {
-		int lowestCostNode = -1;
 		do {
+			lowestCostNode = -1;
 			// TODO Currently states that list iterator is "not dereferencable". must fix
 			//Find node with lowest F cost node in openList
 			for (std::list<int>::const_iterator nodeIndex = openList.begin(), end = openList.end(); nodeIndex != end; ++nodeIndex) {
@@ -67,7 +67,7 @@ void AStar::Search() {
 				//Calculate HScore, using node vPos and cNodeToTarget
 				double h = Length(INDEX_NODE_POINTERS[(*nodeIndex)]->vPos - INDEX_NODE_POINTERS[closestNodeToTarget]->vPos);
 				//Store HScore of this node into nodeHScore (May not be needed...)
-				nodeHScore[(*nodeIndex)] = h;
+				//nodeHScore[(*nodeIndex)] = h;
 				//Put FScore in nodeFScore for nodeIndex
 				nodeFScore[(*nodeIndex)] = g + h;
 				//Check if f is lower than current LowestCostNode f
@@ -92,6 +92,7 @@ void AStar::Search() {
 			openList.remove(lowestCostNode);
 			pathOfNodeIndices.push_back(lowestCostNode);
 			inClosedList[lowestCostNode] = true;
+
 
 		} while (lowestCostNode != closestNodeToTarget);
 	}
