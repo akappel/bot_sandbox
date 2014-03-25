@@ -57,7 +57,7 @@ void dllmonsteraction(const float dt,
 	if (!path.empty()) {
 		if (pow(path.front().x - mEnt.pos.x, 2) + pow(path.front().y - mEnt.pos.y, 2) > 1) {
 			//Calc desired velocity to node
-			vec2 desiredVel = Normalize(pCurrentEnemy->pos - mEnt.pos) * MAX_ENT_SPEED;
+			vec2 desiredVel = Normalize(path.front() - mEnt.pos) * MAX_ENT_SPEED;
 			mEnt.moveDirection += desiredVel;
 		}
 		else {
