@@ -94,7 +94,7 @@ void AStar::Search() {
 			inClosedList[lowestCostNode] = true;
 
 			//To help with performance, we'll break when the max number of nodes is reach
-			if (pathOfNodeIndices.size() > 10) break;
+			if (pathOfNodeIndices.size() > 5) break;
 
 		} while (lowestCostNode != closestNodeToTarget);
 	}
