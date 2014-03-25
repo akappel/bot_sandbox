@@ -12,15 +12,19 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//if the bot can move directly to the target location without the need
 	//for planning a path.
 	//mEnt->fRadius is broken, using hard value of 4.099 (from enemy npc radius)
+
 	if (!isPathObstructed(pEnt->pos, TargetPos, 4.099)) {
 		path.push_back(TargetPos);
 		return true;
 	}
+
 	//Find the closest unobstructed node to the bot's position
 	//GetClosestNodeToPosition is a method that queries the nav graph nodes (NO
 	//NAV GRAPH ATM) nodes to determine the closest unobstructed node to the given
 	//position vector. It is used here to find the closest unobstructed node
 	//to the bot's current location.
+
+	
 	int ClosestNodeToBot = GetClosestNodeToPosition(pEnt->pos);
 
 	//If no visible node found return failure.
@@ -52,18 +56,26 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 		return false;
 	}
 	
-	
+	return false;
 }
 
 bool PathPlanner::isPathObstructed(vec2 A, vec2 B, double BoundingRadius) const {
+	//Check to see if path between vecs A and B are obstructed
+	//Does this by stepping towards vec B from vec A and checking that
+	//the bot's bounding box stays in contact with a node
+
 	vec2 ToB = Normalize(B - A);
 	vec2 curPos = A;
 
-	while (SquaredLength(B - curPos) > BoundingRadius * BoundingRadius) {
+	//The while loop checks that the bounding radius has not yet made contact
+	//with the destination pos.
+	while (pow((B.x - curPos.x), 2) + pow((B.y - curPos.y), 2) > pow(BoundingRadius, 2)) {
 		//Advance cursor position one step
 		curPos += ToB * 0.5 * BoundingRadius;
 
 		//Test that a node intersects with the bounding radius. if no, return True
+		//This means that a straight path is "obstructed" and thus, we need to create a path
+		//with A*
 		if (!doNodesIntersectCircle(curPos, BoundingRadius)) {
 			return true;
 		}
@@ -76,11 +88,12 @@ bool PathPlanner::doNodesIntersectCircle(vec2 curPos, double BoundingRadius) con
 	for (int i = 0; i < pWorldInfo->iNumPathNodes; i++) {
 		//Determine distance from node to curPos
 		double dist = SquaredLength(pWorldInfo->pPathNodes[i].vPos - curPos);
-		if (dist < BoundingRadius * BoundingRadius) {
+		if (pow((pWorldInfo->pPathNodes[i].vPos.x - curPos.x), 2) + pow((pWorldInfo->pPathNodes[i].vPos.y - curPos.y), 2) < pow(BoundingRadius, 2)) {
 			return true;
 		}
 	}
 
+	//Return false if no nodes are found within the radius
 	return false;
 
 }

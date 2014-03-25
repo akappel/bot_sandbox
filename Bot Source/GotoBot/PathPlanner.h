@@ -1,6 +1,7 @@
 #include "DllEntry.h"
 #include "AStar.h"
 #include <list>
+#include <cmath>
 
 class PathPlanner {
 private:

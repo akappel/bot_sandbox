@@ -17,6 +17,10 @@ AStar::AStar(const sWorldInfo &mWorldInfo, int CNTB, int CNTT) :
 void AStar::Search() {
 	//The meat and potatoes. Will be following tutorial and code hosted here:
 	//http://www.policyalmanac.org/games/aStarTutorial.htm
+
+	if (!pathOfNodeIndices.empty()){
+		pathOfNodeIndices.clear();
+	}
 	
 	//First we will create our openlist, our "closed list" is pathOfNodeIndices
 	std::list<int> openList;
@@ -61,7 +65,7 @@ void AStar::Search() {
 				//Store GScore for this node into nodeGScore
 				nodeGScore[(*nodeIndex)] = g;
 				//Calculate HScore, using node vPos and cNodeToTarget
-				double h = SquaredLength(INDEX_NODE_POINTERS[(*nodeIndex)]->vPos - INDEX_NODE_POINTERS[closestNodeToTarget]->vPos);
+				double h = Length(INDEX_NODE_POINTERS[(*nodeIndex)]->vPos - INDEX_NODE_POINTERS[closestNodeToTarget]->vPos);
 				//Store HScore of this node into nodeHScore (May not be needed...)
 				nodeHScore[(*nodeIndex)] = h;
 				//Put FScore in nodeFScore for nodeIndex
