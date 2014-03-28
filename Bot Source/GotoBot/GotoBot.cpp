@@ -65,7 +65,6 @@ void dllmonsteraction(const float dt,
 		}
 		else {
 			//Remove front node when we've arrived
-			mEnt.moveDirection = mEnt.moveDirection * 0;
 			path.pop_front();
 		}
 	}
@@ -170,7 +169,7 @@ void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColo
 				vec2 vLineEnd;
 				vLineEnd.x = vMin.x + x*fGridSize;
 				vLineEnd.y = vMin.y + (y-1)*fGridSize;
-				DrawLine(vLineStart, vLineEnd, GREEN, 0.0f);
+				DrawLine(vLineStart, vLineEnd, GREEN, 1.0f);
 				bInLine = false;
 			}
 		}
@@ -225,6 +224,18 @@ void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColo
 
 		DrawLine(vTop, vBot, GREEN, 0.0f);
 		DrawLine(vRight, vLeft, GREEN, 0.0f);
+	}
+
+	for (std::list<vec2>::const_iterator it = path.begin(); it != path.end(); ++it) {
+		std::list<vec2>::const_iterator it2 = it;
+		it2++;
+
+		if (it2 == path.end()) {
+			break;
+		}
+
+		DrawLine((*it), (*it2), RED, 0.0f);
+
 	}
 
 
