@@ -2,14 +2,33 @@
 #include <list>
 #include <map>
 
+enum nodeState {
+	UNEXPLORED,
+	EXPLORED
+};
+
+struct pathNode {
+	sPathNode* pNode; //Will give us position, index, and connecting nodes
+	pathNode* pParent;
+
+	double g, h, f;
+
+	int index;
+
+	nodeState state;
+};
+
 class AStar {
 private:
 	//Pointer to world info for nodes
 	const sWorldInfo *pWorldInfo;
 	//Storage of ClosestNodeToBot ClosestNodeToTarget
 	int closestNodeToBot, closestNodeToTarget;
+	//Path nodes
+	int numPathNodes;
+	pathNode * nodes;
 	//List of path, to be returned
-	std::list<int> pathOfNodeIndices;
+	std::list<vec2> vPathOfNodes;
 
 private:
 	//A* star method; places path into pathOfNodeIndices list
@@ -18,11 +37,9 @@ private:
 public:
 	//Initialize AStar instance with pointer to world nodes, ClosestNodeToBot and ClosestNodeToTarget
 	AStar(const sWorldInfo &mWorldInfo, int CNTB, int CNTT);
+	~AStar();
 
 	//Simple return function for generated path
-	std::list<int> GetPathToTarget();
+	std::list<vec2> GetPathToTarget();
 
-	//Dictionary for node pointers, based on their index ids
-	//Can this not be a const??
-	std::map<int, sPathNode*> INDEX_NODE_POINTERS;
 };

@@ -13,10 +13,10 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//for planning a path.
 	//mEnt->fRadius is broken, using hard value of 4.099 (from enemy npc radius)
 
-	if (!isPathObstructed(pEnt->pos, TargetPos, 4.099)) {
+	/*if (!isPathObstructed(pEnt->pos, TargetPos, 4.099)) {
 		path.push_back(TargetPos);
 		return true;
-	}
+	}*/
 
 	//Find the closest unobstructed node to the bot's position
 	//GetClosestNodeToPosition is a method that queries the nav graph nodes (NO
@@ -43,10 +43,10 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//This A* search will utilize the Euclidean straight heuristic
 	
 	AStar astar(*pWorldInfo, ClosestNodeToBot, ClosestNodeToTarget);
-	std::list<int> pathIndices = astar.GetPathToTarget();
+	path = astar.GetPathToTarget();
 
 	//Convert to indices to vectors
-	if (!pathIndices.empty()){
+	/*if (!pathIndices.empty()){
 		for (std::list<int>::const_iterator nodeIndex = pathIndices.begin(), end = pathIndices.end(); nodeIndex != end; ++nodeIndex) {
 			path.push_back(astar.INDEX_NODE_POINTERS[(*nodeIndex)]->vPos);
 		}
@@ -54,9 +54,11 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	}
 	else {
 		return false;
-	}
+	}*/
+
+	path.push_back(TargetPos);
 	
-	return false;
+	return true;
 }
 
 bool PathPlanner::isPathObstructed(vec2 A, vec2 B, double BoundingRadius) const {
@@ -108,11 +110,11 @@ int PathPlanner::GetClosestNodeToPosition(vec2 pos) const {
 	//correct node information
 	if (closestNode == no_closest_node_found) {
 		closestNode = pWorldInfo->pPathNodes[0].nodeIndex;
-		sq_len = SquaredLength(pWorldInfo->pPathNodes[0].vPos - pos);
+		sq_len = Length(pWorldInfo->pPathNodes[0].vPos - pos);
 	}
 
 	for (int i = 1; i < pWorldInfo->iNumPathNodes; i++) {
-		double temp = SquaredLength(pWorldInfo->pPathNodes[i].vPos - pos);
+		double temp = Length(pWorldInfo->pPathNodes[i].vPos - pos);
 		if (temp < sq_len) {
 			//Set node index, sq_len
 			closestNode = pWorldInfo->pPathNodes[i].nodeIndex;

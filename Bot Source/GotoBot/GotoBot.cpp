@@ -43,7 +43,7 @@ void dllmonsteraction(const float dt,
 	}
 	
 	accum += dt;
-	if (accum > 30.0f) {
+	if (accum > 1000.0f) {
 		path.clear();
 		pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
 		accum = 0.0f;
@@ -54,14 +54,18 @@ void dllmonsteraction(const float dt,
 		firstPass = false;
 	}
 	
+
+	//I think all my woes are in this function right here...
 	if (!path.empty()) {
-		if (pow(path.front().x - mEnt.pos.x, 2) + pow(path.front().y - mEnt.pos.y, 2) > 1) {
+		//check if radius node is within radius of bot
+		if (pow(path.front().x - mEnt.pos.x, 2) + pow(path.front().y - mEnt.pos.y, 2) > 3) {
 			//Calc desired velocity to node
 			vec2 desiredVel = Normalize(path.front() - mEnt.pos) * MAX_ENT_SPEED;
 			mEnt.moveDirection += desiredVel;
 		}
 		else {
 			//Remove front node when we've arrived
+			mEnt.moveDirection = mEnt.moveDirection * 0;
 			path.pop_front();
 		}
 	}

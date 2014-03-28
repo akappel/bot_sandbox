@@ -1,105 +1,87 @@
 #include "AStar.h"
 
-const int G_WEIGHT = 10;
+//Comparator for sorting function
+bool LowestF(const pathNode* first, const pathNode* second) {
+	return (first->f < second->f);
+}
+
 
 AStar::AStar(const sWorldInfo &mWorldInfo, int CNTB, int CNTT) :
-	pWorldInfo(&mWorldInfo),
-	closestNodeToBot(CNTB),
-	closestNodeToTarget(CNTT)
+pWorldInfo(&mWorldInfo),
+closestNodeToBot(CNTB),
+closestNodeToTarget(CNTT)
 {
-	//Initialize INDEX_NODE_POINTERS
-	for (int i = 0; i < pWorldInfo->iNumPathNodes; i++){
-		INDEX_NODE_POINTERS[pWorldInfo->pPathNodes[i].nodeIndex] = &pWorldInfo->pPathNodes[i];
+	//One time allocation of array of pathNodes
+	numPathNodes = pWorldInfo->iNumPathNodes;
+	nodes = new pathNode[numPathNodes];
+
+	memset(nodes, 0, sizeof(pathNode) * numPathNodes);
+
+	for (int i = 0; i < numPathNodes; i++) {
+		nodes[i].pNode = &pWorldInfo->pPathNodes[i];
+		nodes[i].index = pWorldInfo->pPathNodes[i].nodeIndex;
 	}
+
 	Search();
+}
+
+AStar::~AStar() {
+	delete[] nodes;
 }
 
 void AStar::Search() {
 	//The meat and potatoes. Will be following tutorial and code hosted here:
 	//http://www.policyalmanac.org/games/aStarTutorial.htm
-	
-	//First we will create our openlist, our "closed list" is pathOfNodeIndices
-	std::list<int> openList;
 
-	//Some informative maps to help with looking up information
-	std::map<int, int> parentNodeOf;
-	std::map<int, int> nodeGScore;
-	std::map<int, int> nodeHScore;
-	std::map<int, int> nodeFScore;
-	std::map<int, bool> inClosedList;
-
-	//used while  finding lowest cost node
-	int lowestCostNode;
-
-	//Init bool map to false
-	for (int i = 0; i < pWorldInfo->iNumPathNodes; i++){
-		inClosedList[pWorldInfo->pPathNodes[i].nodeIndex] = false;
-	}
+	std::list<pathNode*> openList;
 
 	//Then add our initial starting node (CNTB)
-	openList.push_back(closestNodeToBot);
+	openList.push_back(&nodes[closestNodeToBot]);
 
-	//Add initial node parent of -1, since it is the root
-	parentNodeOf[closestNodeToBot] = -1;
-	nodeGScore[closestNodeToBot] = 0;
+	//Make initial node's parent NULL, since it is the root
+	nodes[closestNodeToBot].pParent = NULL;
+	nodes[closestNodeToBot].g = 0.0f;
+	nodes[closestNodeToBot].h = Length(nodes[closestNodeToBot].pNode->vPos - nodes[closestNodeToTarget].pNode->vPos);
+	nodes[closestNodeToBot].f = nodes[closestNodeToBot].g + nodes[closestNodeToBot].h;
 
-	//Check that the cNodeToBot is not equal to cNodeToTarget
-	if (closestNodeToBot == closestNodeToTarget) {
-		openList.remove(closestNodeToBot);
-		pathOfNodeIndices.push_back(closestNodeToBot);
-	}
-	else {
-		do {
-			lowestCostNode = -1;
-			// TODO Currently states that list iterator is "not dereferencable". must fix
-			//Find node with lowest F cost node in openList
-			for (std::list<int>::const_iterator nodeIndex = openList.begin(), end = openList.end(); nodeIndex != end; ++nodeIndex) {
-				//Calculate GScore
-				//Get the parent's GScore
-				int parentGScore = 0;
-				if (parentNodeOf[(*nodeIndex)] != -1) {
-					parentGScore = nodeGScore[parentNodeOf[(*nodeIndex)]];
-				}
-				//Add GScore to nodeGScore
-				int g = parentGScore + G_WEIGHT;
-				//Store GScore for this node into nodeGScore
-				nodeGScore[(*nodeIndex)] = g;
-				//Calculate HScore, using node vPos and cNodeToTarget
-				double h = Length(INDEX_NODE_POINTERS[(*nodeIndex)]->vPos - INDEX_NODE_POINTERS[closestNodeToTarget]->vPos);
-				//Store HScore of this node into nodeHScore (May not be needed...)
-				//nodeHScore[(*nodeIndex)] = h;
-				//Put FScore in nodeFScore for nodeIndex
-				nodeFScore[(*nodeIndex)] = g + h;
-				//Check if f is lower than current LowestCostNode f
-				if (lowestCostNode == -1) {
-					lowestCostNode = (*nodeIndex);
-				}
-				if (nodeFScore[(*nodeIndex)] < nodeFScore[lowestCostNode]) {
-					lowestCostNode = (*nodeIndex);
-				}
+	pathNode* currentNode;
+	while (!openList.empty()) {
+
+		//Sort openList so that front node always has the lowest f score
+		openList.sort(LowestF);
+		//Get front node in openList
+		currentNode = openList.front();
+		//remove it from the openList
+		openList.pop_front();
+		//Change state to explored
+		currentNode->state = EXPLORED;
+
+		//Check if current node is equal to target node
+		if (currentNode->index == closestNodeToTarget) {
+			//begin going backwards from currentNode through parents to start node, push_front node's vPos
+			while (currentNode != NULL) {
+				vPathOfNodes.push_front(currentNode->pNode->vPos);
+				currentNode = currentNode->pParent;
 			}
+			break;
+		}
 
-			for (int i = 0; i < 4; i++) {
-				int connectingNode = pWorldInfo->pPathNodes[lowestCostNode].connectingNodeIndex[i];
-				if (connectingNode != -1 && inClosedList[connectingNode] == false) {
-					openList.push_back(connectingNode);
-					//Add nodes to openList and their parents to nodeParents
-					parentNodeOf[connectingNode] = lowestCostNode;
-				}
+		//Add nodes to openList and set parent to current node
+		for (int i = 0; i < 4; i++) {
+			int connectingNode = currentNode->pNode->connectingNodeIndex[i];
+			if (connectingNode != -1 && nodes[connectingNode].state != EXPLORED) {
+				openList.push_back(&nodes[connectingNode]);
+				nodes[connectingNode].pParent = currentNode;
+				//Calculate scores
+				nodes[connectingNode].g = Length(nodes[connectingNode].pNode->vPos - currentNode->pNode->vPos) + currentNode->g;
+				nodes[connectingNode].h = Length(nodes[connectingNode].pNode->vPos - nodes[closestNodeToTarget].pNode->vPos);
+				nodes[connectingNode].f = nodes[connectingNode].g + nodes[connectingNode].h;
+
 			}
-
-			//Drop selected lowestCostNode from openList, add to pathOfNodeIndices
-			openList.remove(lowestCostNode);
-			pathOfNodeIndices.push_back(lowestCostNode);
-			inClosedList[lowestCostNode] = true;
-
-			//To help with performance, we'll break when the max number of nodes is reach
-			//if (pathOfNodeIndices.size() > 5) break;
-
-		} while (lowestCostNode != closestNodeToTarget);
+		}
 	}
 }
 
-std::list<int> AStar::GetPathToTarget() {
-	return pathOfNodeIndices;
+std::list<vec2> AStar::GetPathToTarget() {
+	return vPathOfNodes;
 }
