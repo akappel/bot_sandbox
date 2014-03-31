@@ -13,7 +13,7 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//for planning a path.
 	//mEnt->fRadius is broken, using hard value of 4.099 (from enemy npc radius)
 
-	/*if (!isPathObstructed(pEnt->pos, TargetPos, 4.099)) {
+	/*if (!isPathObstructed(pEnt->pos, vDestPos, 4.099)) {
 		path.push_back(TargetPos);
 		return true;
 	}*/
@@ -33,7 +33,7 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	}
 
 	//Find the closest visible unobstructed node to the target position
-	int ClosestNodeToTarget = GetClosestNodeToPosition(TargetPos);
+	int ClosestNodeToTarget = GetClosestNodeToPosition(vDestPos);
 	if (ClosestNodeToTarget == no_closest_node_found) {
 		return false;
 	}
@@ -56,7 +56,7 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 		return false;
 	}*/
 
-	path.push_back(TargetPos);
+	path.push_back(vDestPos);
 	
 	return true;
 }

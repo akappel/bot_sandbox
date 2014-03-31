@@ -12,9 +12,7 @@ struct pathNode {
 	pathNode* pParent;
 
 	double g, h, f;
-
 	int index;
-
 	nodeState state;
 };
 
@@ -37,6 +35,8 @@ private:
 public:
 	//Initialize AStar instance with pointer to world nodes, ClosestNodeToBot and ClosestNodeToTarget
 	AStar(const sWorldInfo &mWorldInfo, int CNTB, int CNTT);
+
+	//dtor
 	~AStar();
 
 	//Simple return function for generated path

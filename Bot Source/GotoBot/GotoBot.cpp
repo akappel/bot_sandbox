@@ -14,7 +14,7 @@ sOtherEnts *pCurrentEnemy = NULL;
 PathPlanner pathPlanner;
 std::list<vec2> path;
 
-float accum = 0.0f; //FOr keeping track of calculation speed
+int accum = 0; //FOr keeping track of calculation speed
 bool firstPass = true;
 
 void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColor,float));
@@ -43,13 +43,13 @@ void dllmonsteraction(const float dt,
 	}
 	
 	accum += dt;
-	if (accum > 1000.0f) {
+	if (accum > 10) {
+		mEnt.moveDirection = mEnt.moveDirection * 0;
 		path.clear();
 		pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
-		accum = 0.0f;
+		accum = 0;
 	}
-	else if (firstPass) {
-		path.clear();
+	if (firstPass) {
 		pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
 		firstPass = false;
 	}
@@ -61,12 +61,17 @@ void dllmonsteraction(const float dt,
 		if (pow(path.front().x - mEnt.pos.x, 2) + pow(path.front().y - mEnt.pos.y, 2) > 3) {
 			//Calc desired velocity to node
 			vec2 desiredVel = Normalize(path.front() - mEnt.pos) * MAX_ENT_SPEED;
-			mEnt.moveDirection += desiredVel;
+			mEnt.moveDirection = desiredVel;
 		}
 		else {
 			//Remove front node when we've arrived
 			path.pop_front();
 		}
+	}
+	else {
+		mEnt.moveDirection = mEnt.moveDirection * 0;
+		path.clear();
+		//pathPlanner.CreatePathToPosition(pCurrentEnemy->pos, path);
 	}
 
 	mEnt.aimDirection = Normalize(pCurrentEnemy->pos - mEnt.pos);
@@ -108,7 +113,7 @@ void dllmonsteraction(const float dt,
 
 void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColor,float))
 {
-	//first find best fit
+	/*//first find best fit
 	vec2 vMin = vec2( 10000,  10000);
 	vec2 vMax = vec2(-10000, -10000);
 
@@ -224,8 +229,9 @@ void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColo
 
 		DrawLine(vTop, vBot, GREEN, 0.0f);
 		DrawLine(vRight, vLeft, GREEN, 0.0f);
-	}
+	}*/
 
+	//Draw bot's path
 	for (std::list<vec2>::const_iterator it = path.begin(); it != path.end(); ++it) {
 		std::list<vec2>::const_iterator it2 = it;
 		it2++;

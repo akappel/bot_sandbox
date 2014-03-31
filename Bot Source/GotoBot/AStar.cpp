@@ -15,8 +15,11 @@ closestNodeToTarget(CNTT)
 	numPathNodes = pWorldInfo->iNumPathNodes;
 	nodes = new pathNode[numPathNodes];
 
+	//Zero out the nodes space
 	memset(nodes, 0, sizeof(pathNode) * numPathNodes);
 
+	//update information about all 495 nodes; we now have
+	//an array of information for all of them.
 	for (int i = 0; i < numPathNodes; i++) {
 		nodes[i].pNode = &pWorldInfo->pPathNodes[i];
 		nodes[i].index = pWorldInfo->pPathNodes[i].nodeIndex;
