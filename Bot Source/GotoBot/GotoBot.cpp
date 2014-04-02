@@ -98,20 +98,25 @@ void dllmonsteraction(const float dt,
 		currentEnemy = FindNewEnemy(currentEnemy, mEnt);
 	}
 
-	//Create new path every half-second, or when accumulation of dt > 500
+	//If our bot dies, create a new path ***WORKS
+	//if (mEnt.bIsInvincible) {
+	//	pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
+	//}
+
+	//Create new path every half-second, aka when accumulation of dt > 500 ***NOT WORKING
 	accum += dt;
-	if (accum > 500) {
+	if (accum > 500.0f) {
 		pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
 		accum = 0.0f;
 	}
 	
-	//Reset moveDirection to zero in preparation of new movement vector, if there is one
-	mEnt.moveDirection = mEnt.moveDirection * 0;
 	//Make sure the path still has nodes to move towards. If not, generate new path
 	if (path.empty()) {
 		pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
 	}
 	
+	//Reset moveDirection to zero in preparation of new movement vector, if there is one
+	mEnt.moveDirection = mEnt.moveDirection * 0;
 	//If the bot has landed on the front node of the list, pop that node
 	if (pow(path.front().x - mEnt.pos.x, 2) + pow(path.front().y - mEnt.pos.y, 2) < 4) {
 		path.pop_front();

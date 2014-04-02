@@ -35,7 +35,7 @@ public:
 	//For now, we will only have a connection to our mWorldInfo. Later we'll implement
 	//the actual bot.
 	PathPlanner(){}
-	PathPlanner(sEntInfo &mEnt, const sWorldInfo &mWorldInfo);
+	PathPlanner(const sEntInfo &mEnt, const sWorldInfo &mWorldInfo);
 
 	//Finds the least cost path between the agent's pos and the target
 	//pos. Fills path with a list of waypoints if the search is successful

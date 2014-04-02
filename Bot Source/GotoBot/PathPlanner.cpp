@@ -1,6 +1,9 @@
 #include "PathPlanner.h"
 
 bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
+	//Flush any current nodes in the path
+	path.clear();
+
 	//Make a note of the target position
 	vDestPos = TargetPos;
 

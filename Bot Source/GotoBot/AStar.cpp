@@ -23,6 +23,7 @@ closestNodeToTarget(CNTT)
 	for (int i = 0; i < numPathNodes; i++) {
 		nodes[i].pNode = &pWorldInfo->pPathNodes[i];
 		nodes[i].index = pWorldInfo->pPathNodes[i].nodeIndex;
+		nodes[i].state = UNEXPLORED;
 	}
 
 	Search();
@@ -72,7 +73,16 @@ void AStar::Search() {
 		//Add nodes to openList and set parent to current node
 		for (int i = 0; i < 4; i++) {
 			int connectingNode = currentNode->pNode->connectingNodeIndex[i];
-			if (connectingNode != -1 && nodes[connectingNode].state != EXPLORED) {
+			bool inOpenList = false;
+
+			//Make sure that connecting node isn't already in openList
+			for (std::list<pathNode*>::const_iterator it = openList.begin(); it != openList.end(); ++it) {
+				if (connectingNode == (*it)->index) {
+					inOpenList = true;
+				}
+			}
+
+			if (connectingNode != -1 && nodes[connectingNode].state == UNEXPLORED && !inOpenList) {
 				openList.push_back(&nodes[connectingNode]);
 				nodes[connectingNode].pParent = currentNode;
 				//Calculate scores
