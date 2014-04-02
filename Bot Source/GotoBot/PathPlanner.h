@@ -26,7 +26,7 @@ private:
 
 public:
 	//a pointer to the owner of this class aka mEnt
-	sEntInfo *pEnt;
+	const sEntInfo *pEnt;
 
 	//In the book, it says a reference to a navgraph. I will use a reference to
 	//mWorldInfo for now.
