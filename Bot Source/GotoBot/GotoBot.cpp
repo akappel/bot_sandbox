@@ -18,7 +18,6 @@ struct enemyBot {
 enemyBot *enemies;
 int numEnemies;
 enemyBot currentEnemy;
-
 PathPlanner pathPlanner;
 std::list<vec2> path;
 
@@ -27,6 +26,7 @@ bool bInitialRun = true;
 
 //For time keeping
 float accum = 0.0f;
+const float NEW_PATH_DT = 0.5f;
 
 void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColor,float));
 
@@ -75,7 +75,6 @@ void dllmonsteraction(const float dt,
 					  const sWorldInfo &mWorldInfo, 
 					  void (*DrawLine)(vec2,vec2,vColor,float))
 {
-
 	//Init array of enemy pointers
 	if (!enemies) {
 		InitEnemyBotArray(mWorldInfo);
@@ -105,9 +104,9 @@ void dllmonsteraction(const float dt,
 	//	pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
 	//}
 
-	//Create new path every half-second, aka when accumulation of dt > 500 ***NOT WORKING
+	//Create new path every half-second, aka when accumulation of dt > .5
 	accum += dt;
-	if (accum > 0.5f) {
+	if (accum > NEW_PATH_DT) {
 		pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
 		accum = 0.0f;
 	}
