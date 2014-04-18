@@ -12,12 +12,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AStar.h" />
+    <ClInclude Include="Behavior.h" />
+    <ClInclude Include="Bot.h" />
     <ClInclude Include="DllEntry.h" />
+    <ClInclude Include="HighLevelBehaviors.h" />
     <ClInclude Include="PathPlanner.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AStar.cpp" />
+    <ClCompile Include="Behavior.cpp" />
+    <ClCompile Include="Bot.cpp" />
     <ClCompile Include="GotoBot.cpp" />
+    <ClCompile Include="HighLevelBehaviors.cpp" />
     <ClCompile Include="PathPlanner.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

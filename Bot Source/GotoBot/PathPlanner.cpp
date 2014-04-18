@@ -1,5 +1,10 @@
 #include "PathPlanner.h"
 
+PathPlanner::PathPlanner(const sEntInfo &mEnt, const sWorldInfo &mWorldInfo) :
+pEnt(&mEnt),
+pWorldInfo(&mWorldInfo)
+{}
+
 bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//Flush any current nodes in the path
 	path.clear();
@@ -17,7 +22,7 @@ bool PathPlanner::CreatePathToPosition(vec2 TargetPos, std::list<vec2> &path) {
 	//mEnt->fRadius is broken, using hard value of 4.099 (from enemy npc radius)
 
 	/*if (!isPathObstructed(pEnt->pos, vDestPos, 4.099)) {
-		path.push_back(TargetPos);
+		path.push_back(vDestPos);
 		return true;
 	}*/
 
