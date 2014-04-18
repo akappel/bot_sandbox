@@ -22,7 +22,7 @@ bool IsHealthLow::Run() {
 }
 
 
-//FindClosestHealthPickup
+///FindClosestHealthPickup
 FindClosestHealthPickup::FindClosestHealthPickup(sEntInfo & bot, const sWorldInfo & world) {
 	pBotInfo = &bot;
 	pWorldInfo = &world;
@@ -33,8 +33,37 @@ bool FindClosestHealthPickup::Run() {
 	//(May be better to not use straight line distance, since it may not
 	//be the "closest" path-wise)...
 
+	// TODO Implement function
+	return true;
+	
+
 	// TODO Create sublist of healthpickups on init for faster traversal
 
 
 
+}
+
+
+///CreatePathToTarget
+CreatePathToTarget::CreatePathToTarget(sEntInfo & bot, const sWorldInfo & world, eEntityTypes t) {
+	pBotInfo = &bot;
+	pWorldInfo = &world;
+	target = t;
+}
+
+bool CreatePathToTarget::Run() {
+	// TODO Implement function
+	return true;
+}
+
+
+///FollowPathToTarget
+FollowPathToTarget::FollowPathToTarget(sEntInfo & bot, const sWorldInfo & world) {
+	pBotInfo = &bot;
+	pWorldInfo = &world;
+}
+
+bool FollowPathToTarget::Run() {
+	// TODO Implement function
+	return true;
 }

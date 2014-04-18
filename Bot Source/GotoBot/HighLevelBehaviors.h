@@ -2,6 +2,7 @@
 #define HIGHLEVELBEHAVIORS_H
 
 #include "Behavior.h"
+#include "DllEntry.h"
 
 //////////////////////////////////////////
 //***Grab Healthpickup***/////////////////
@@ -14,6 +15,7 @@ class IsHealthLow : public BTTask {
 
 public:
 	IsHealthLow(sEntInfo & bot, const sWorldInfo & world);
+	~IsHealthLow() {}
 
 	bool Run();
 
@@ -29,10 +31,39 @@ class FindClosestHealthPickup : public BTTask {
 
 public:
 	FindClosestHealthPickup(sEntInfo & bot, const sWorldInfo & world);
+	~FindClosestHealthPickup() {}
 
 	bool Run();
 
 };
 
+
+///CreatePathToTarget: Action node
+//Return true if path is successfully create
+//Again, this can potentially be set up to reference different fields
+//in the "Blackboard" data struct aka CreatePathToTarget(target="ENEMY")
+//or CreatePathToTarget(target="HEALTH_PICKUP").
+class CreatePathToTarget : public BTTask {
+private:
+	eEntityTypes target; //Houses target type on bt setup, only thing is it means that
+	//different behaviors can't really use the same CreatePathToTarget at runtime...
+
+public:
+	CreatePathToTarget(sEntInfo & bot, const sWorldInfo & world, eEntityTypes t);
+	~CreatePathToTarget() {}
+
+	bool Run();
+};
+
+
+///FollowPathToTarget: Action node
+class FollowPathToTarget : public BTTask {
+
+public:
+	FollowPathToTarget(sEntInfo & bot, const sWorldInfo & world);
+	~FollowPathToTarget() {}
+
+	bool Run();
+};
 
 #endif
