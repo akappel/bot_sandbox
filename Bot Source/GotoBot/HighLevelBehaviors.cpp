@@ -44,26 +44,26 @@ bool FindClosestHealthPickup::Run() {
 }
 
 
-///CreatePathToTarget
-CreatePathToTarget::CreatePathToTarget(sEntInfo & bot, const sWorldInfo & world, eEntityTypes t) {
+///CreatePathToHealthPickup
+CreatePathToHealthPickup::CreatePathToHealthPickup(sEntInfo & bot, const sWorldInfo & world, eEntityTypes t) {
 	pBotInfo = &bot;
 	pWorldInfo = &world;
 	target = t;
 }
 
-bool CreatePathToTarget::Run() {
-	// TODO Implement function
+bool CreatePathToHealthPickup::Run() {
+
 	return true;
 }
 
 
-///FollowPathToTarget
-FollowPathToTarget::FollowPathToTarget(sEntInfo & bot, const sWorldInfo & world) {
+///FollowPathToHealthPickup
+FollowPathToHealthPickup::FollowPathToHealthPickup(sEntInfo & bot, const sWorldInfo & world) {
 	pBotInfo = &bot;
 	pWorldInfo = &world;
 }
 
-bool FollowPathToTarget::Run() {
+bool FollowPathToHealthPickup::Run() {
 	// TODO Implement function
 	return true;
 }

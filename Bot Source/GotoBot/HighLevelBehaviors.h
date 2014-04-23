@@ -43,25 +43,22 @@ public:
 //Again, this can potentially be set up to reference different fields
 //in the "Blackboard" data struct aka CreatePathToTarget(target="ENEMY")
 //or CreatePathToTarget(target="HEALTH_PICKUP").
-class CreatePathToTarget : public BTTask {
-private:
-	eEntityTypes target; //Houses target type on bt setup, only thing is it means that
-	//different behaviors can't really use the same CreatePathToTarget at runtime...
+class CreatePathToHealthPickup : public BTTask {
 
 public:
-	CreatePathToTarget(sEntInfo & bot, const sWorldInfo & world, eEntityTypes t);
-	~CreatePathToTarget() {}
+	CreatePathToHealthPickup(sEntInfo & bot, const sWorldInfo & world, eEntityTypes t);
+	~CreatePathToHealthPickup() {}
 
 	bool Run();
 };
 
 
 ///FollowPathToTarget: Action node
-class FollowPathToTarget : public BTTask {
+class FollowPathToHealthPickup : public BTTask {
 
 public:
-	FollowPathToTarget(sEntInfo & bot, const sWorldInfo & world);
-	~FollowPathToTarget() {}
+	FollowPathToHealthPickup(sEntInfo & bot, const sWorldInfo & world);
+	~FollowPathToHealthPickup() {}
 
 	bool Run();
 };
