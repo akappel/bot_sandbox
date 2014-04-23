@@ -11,14 +11,15 @@
 
 ///IsHealthLow: Condition node
 //Return true if health is low
-class IsHealthLow : public BTTask {
+class IsHealthLow : public Behavior {
 
 public:
-	IsHealthLow(sEntInfo & bot, const sWorldInfo & world);
+	IsHealthLow(Bot& b) : Behavior(b) {}
 	~IsHealthLow() {}
 
-	bool Run();
-
+	virtual void OnInitialize() {}
+	virtual Status Update();
+	virtual void OnTerminate(Status) {}
 };
 
 
@@ -27,14 +28,15 @@ public:
 //sets a variable so that later Tasks can path to it.
 // TODO Change to "FindClosestItem<"ITEM_CLASS">" so that we can it for multiple items.
 // This will make it more modular.
-class FindClosestHealthPickup : public BTTask {
+class FindClosestHealthPickup : public Behavior {
 
 public:
-	FindClosestHealthPickup(sEntInfo & bot, const sWorldInfo & world);
+	FindClosestHealthPickup(Bot& b) : Behavior(b) {}
 	~FindClosestHealthPickup() {}
 
-	bool Run();
-
+	virtual void OnInitialize() {}
+	virtual Status Update();
+	virtual void OnTerminate(Status) {}
 };
 
 
@@ -43,24 +45,28 @@ public:
 //Again, this can potentially be set up to reference different fields
 //in the "Blackboard" data struct aka CreatePathToTarget(target="ENEMY")
 //or CreatePathToTarget(target="HEALTH_PICKUP").
-class CreatePathToHealthPickup : public BTTask {
+class CreatePathToHealthPickup : public Behavior {
 
 public:
-	CreatePathToHealthPickup(sEntInfo & bot, const sWorldInfo & world, eEntityTypes t);
+	CreatePathToHealthPickup(Bot& b) : Behavior(b) {}
 	~CreatePathToHealthPickup() {}
 
-	bool Run();
+	virtual void OnInitialize();
+	virtual Status Update();
+	virtual void OnTerminate(Status) {}
 };
 
 
 ///FollowPathToTarget: Action node
-class FollowPathToHealthPickup : public BTTask {
+class FollowPathToHealthPickup : public Behavior {
 
 public:
-	FollowPathToHealthPickup(sEntInfo & bot, const sWorldInfo & world);
+	FollowPathToHealthPickup(Bot& b) : Behavior(b) {}
 	~FollowPathToHealthPickup() {}
 
-	bool Run();
+	virtual void OnInitialize() {}
+	virtual Status Update();
+	virtual void OnTerminate(Status) {}
 };
 
 #endif

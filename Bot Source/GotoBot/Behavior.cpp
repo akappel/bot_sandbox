@@ -1,67 +1,87 @@
 #include "Behavior.h"
 
-
-///////////////////////////////////////////
-//****Task****/////////////////////////////
-///////////////////////////////////////////
-//Set this up once so that derived class delete children tasks
-BTTask::~BTTask() {
-	for (TaskIterator t = children.begin(); t != children.end(); ++t) {
-		delete (*t);
+///////////////////////////////
+///Behavior
+///////////////////////////////
+Status Behavior::Tick() {
+	if (m_eStatus != BH_RUNNING) {
+		OnInitialize();
 	}
+
+	m_eStatus = Update();
+
+	if (m_eStatus != BH_RUNNING) {
+		OnTerminate(m_eStatus);
+	}
+
+	return m_eStatus;
+}
+
+void Behavior::Reset() {
+	m_eStatus = BH_INVALID;
+}
+
+void Behavior::Abort() {
+	OnTerminate(BH_ABORTED);
+	m_eStatus = BH_ABORTED;
+}
+
+bool Behavior::IsTerminated() const {
+	return m_eStatus == BH_SUCCESS || m_eStatus == BH_FAILURE;
+}
+
+bool Behavior::IsRunning() const {
+	return m_eStatus == BH_RUNNING;
+}
+
+Status Behavior::GetStatus() const {
+	return m_eStatus;
 }
 
 
-///////////////////////////////////////////
-//****Selector****/////////////////////////
-///////////////////////////////////////////
-BTSelector::BTSelector(sEntInfo & bot, const sWorldInfo & world) {
-	pBotInfo = &bot;
-	pWorldInfo = &world;
+//////////////////////////////////
+///Composite
+//////////////////////////////////
+void Composite::ClearChildren() {
+	typedef std::list<Behavior*>::iterator BehaviorIterator;
+	for (BehaviorIterator it = m_Children.begin(); it != m_Children.end(); ++it) {
+		delete (*it);
+	}
+	m_Children.clear();
 }
 
-bool BTSelector::Run() {
-	//Handle no child nodes
-	if (children.empty()) {
-		printf("NO CHILDREN TASKS PRESENT");
-		return false;
-	}
 
-	//Return first child to return true
-	for (TaskIterator t = children.begin(); t != children.end(); ++t) {
-		if ((*t)->Run()) {
-			return true;
+/////////////////////////////////
+///Sequence
+/////////////////////////////////
+Status Sequence::Update() {
+	while (true) {
+		Status s = (*m_currentChild)->Tick();
+
+		if (s != BH_SUCCESS) {
+			return s;
+		}
+
+		if (++m_currentChild == m_Children.end()) {
+			return BH_SUCCESS;
 		}
 	}
-
-	//Return false otherwise
-	return false;
 }
 
 
-///////////////////////////////////////////
-//****Sequence****/////////////////////////
-///////////////////////////////////////////
+//////////////////////////////////
+///Selector
+//////////////////////////////////
+Status Selector::Update() {
+	while (true) {
+		Status s = (*m_currentChild)->Tick();
 
-BTSequence::BTSequence(sEntInfo & bot, const sWorldInfo & world) {
-	pBotInfo = &bot;
-	pWorldInfo = &world;
-}
+		if (s != BH_FAILURE) {
+			return s;
+		}
 
-bool BTSequence::Run() {
-	//Handle no child nodes
-	if (children.empty()) {
-		printf("NO CHILDREN TASKS PRESENT");
-		return false;
-	}
-
-	//Return false at first occurence of child returning false
-	for (TaskIterator t = children.begin(); t != children.end(); ++t) {
-		if (!(*t)->Run()) {
-			return false;
+		if (++m_currentChild == m_Children.end()) {
+			return BH_FAILURE;
 		}
 	}
-
-	//Return true otherwise
-	return true;
 }

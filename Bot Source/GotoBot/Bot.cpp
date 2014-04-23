@@ -13,6 +13,8 @@ pBotInfo(&bot),
 pWorldInfo(&world)
 {
 	pPathPlanner = new PathPlanner(bot, world);
+	InitHighLevelBehaviors(*this);
+	InitLowLevelBehaviors(*this);
 }
 
 /////////////////////////////////////////////////////
@@ -20,4 +22,5 @@ pWorldInfo(&world)
 /////////////////////////////////////////////////////
 Bot::~Bot() {
 	delete pPathPlanner;
+	//Delete behaviors
 }

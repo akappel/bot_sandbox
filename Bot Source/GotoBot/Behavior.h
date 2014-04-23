@@ -3,55 +3,101 @@
 
 #include <list>
 #include "DllEntry.h"
+#include "Bot.h"
 
-//Typedef the iterator for ease of use
-class BTTask;
-typedef std::list<BTTask*>::const_iterator TaskIterator;
+//Draws directly from BTSK, copyright alexjc
 
-///Task: Abstract base class, to be subclassed for implementation.
-class BTTask {
+
+
+
+enum Status {
+	BH_INVALID,
+	BH_SUCCESS,
+	BH_FAILURE,
+	BH_RUNNING,
+	BH_ABORTED,
+};
+
+
+///Behavior: Base class for actions, conditions, and composites.
+class Behavior {
 
 protected:
-
-	//Pointer to world and bot data, later encapsulate in Blackboard structure
-	sEntInfo * pBotInfo;
-	const sWorldInfo * pWorldInfo;
-	std::list<BTTask*> children;
-
-public:
-	//Let each derived class use this destructor to destroy children list
-	~BTTask();
-
-	void AddChildTask(BTTask* subtask) { children.push_back(subtask); }
-
-	//Precondition and execution all wrapped in one for now
-	virtual bool Run() = 0;
-
-};
-
-
-///Selector: Return first subtask that returns true
-class BTSelector : public BTTask {
-
-public:
-	BTSelector(sEntInfo & bot, const sWorldInfo & world);
-	~BTSelector() {}
-
-	bool Run();
+	Status m_eStatus;
+	Bot* m_pBot;
 	
+public:
+	Behavior(Bot& b) : m_eStatus(BH_INVALID), m_pBot(&b) {}
+	virtual ~Behavior() {}
+
+	virtual void OnInitialize() {}
+	virtual Status Update() = 0;
+	virtual void OnTerminate(Status) {}
+
+	Status Tick();
+
+	void Reset();
+	void Abort();
+
+	bool IsTerminated() const;
+	bool IsRunning() const;
+	Status GetStatus() const;
 };
 
 
-///Sequence: Return true only if all subtasks do
-class BTSequence : public BTTask {
+///Decorator: Behavior wrapper for behaviors
+class Decorator : public Behavior {
+
+protected:
+	Behavior* m_pChild;
 
 public:
-	BTSequence(sEntInfo & bot, const sWorldInfo & world);
-	~BTSequence() {}
+	Decorator(Bot& b, Behavior* child) : m_pChild(child), Behavior(b) {}
+};
 
-	bool Run();
+
+///Composite
+class Composite : public Behavior {
+
+protected:
+	typedef std::list<Behavior*> Behaviors;
+	Behaviors m_Children;
+
+public:
+	virtual ~Composite() {
+		ClearChildren();
+	}
+
+	void AddChild(Behavior* child) { m_Children.push_back(child); }
+	void RemoveChild(Behavior* child) { m_Children.remove(child); }
+	void ClearChildren();
 
 };
 
+
+///Sequence: Return success if all children return success
+class Sequence : public Composite {
+
+protected:
+	Behaviors::iterator m_currentChild;
+
+	virtual ~Sequence() {}
+	virtual void OnInitialize() { m_currentChild = m_Children.begin(); }
+	virtual Status Update();
+
+};
+
+
+///Sequence: return success at first child's success
+class Selector : public Composite {
+
+protected:
+	Behaviors::iterator m_currentChild;
+
+	virtual ~Selector() {}
+	virtual void OnInitialize() { m_currentChild = m_Children.begin(); }
+	virtual Status Update();
+
+};
 
 #endif
