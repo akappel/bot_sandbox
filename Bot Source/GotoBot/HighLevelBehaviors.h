@@ -1,5 +1,4 @@
-#ifndef HIGHLEVELBEHAVIORS_H
-#define HIGHLEVELBEHAVIORS_H
+#pragma once
 
 #include "Behavior.h"
 #include "DllEntry.h"
@@ -8,6 +7,8 @@
 //***Grab Healthpickup***/////////////////
 //Selector: Finds health if health is low
 //////////////////////////////////////////
+
+class Bot;
 
 ///IsHealthLow: Condition node
 //Return true if health is low
@@ -64,9 +65,7 @@ public:
 	FollowPathToHealthPickup(Bot& b) : Behavior(b) {}
 	~FollowPathToHealthPickup() {}
 
-	virtual void OnInitialize() {}
+	virtual void OnInitialize();
 	virtual Status Update();
-	virtual void OnTerminate(Status) {}
+	virtual void OnTerminate(Status);
 };
-
-#endif

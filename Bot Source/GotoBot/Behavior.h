@@ -1,14 +1,11 @@
-#ifndef BEHAVIOR_H
-#define BEHAVIOR_H
+#pragma once
 
 #include <list>
 #include "DllEntry.h"
-#include "Bot.h"
+
+class Bot;
 
 //Draws directly from BTSK, copyright alexjc
-
-
-
 
 enum Status {
 	BH_INVALID,
@@ -27,6 +24,7 @@ protected:
 	Bot* m_pBot;
 	
 public:
+	Behavior() {}
 	Behavior(Bot& b) : m_eStatus(BH_INVALID), m_pBot(&b) {}
 	virtual ~Behavior() {}
 
@@ -64,6 +62,8 @@ protected:
 	Behaviors m_Children;
 
 public:
+	Composite() {}
+
 	virtual ~Composite() {
 		ClearChildren();
 	}
@@ -77,11 +77,13 @@ public:
 
 ///Sequence: Return success if all children return success
 class Sequence : public Composite {
+public:
+	Sequence() {}
+	virtual ~Sequence() {}
 
 protected:
 	Behaviors::iterator m_currentChild;
 
-	virtual ~Sequence() {}
 	virtual void OnInitialize() { m_currentChild = m_Children.begin(); }
 	virtual Status Update();
 
@@ -90,14 +92,14 @@ protected:
 
 ///Sequence: return success at first child's success
 class Selector : public Composite {
+public:
+	Selector() {}
+	virtual ~Selector() {}
 
 protected:
 	Behaviors::iterator m_currentChild;
 
-	virtual ~Selector() {}
 	virtual void OnInitialize() { m_currentChild = m_Children.begin(); }
 	virtual Status Update();
 
 };
-
-#endif

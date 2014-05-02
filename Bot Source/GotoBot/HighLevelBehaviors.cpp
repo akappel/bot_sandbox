@@ -1,4 +1,6 @@
 #include "HighLevelBehaviors.h"
+#include "Bot.h"
+#include <iostream>
 
 //////////////////////////////////////////
 //***Grab Healthpickup***/////////////////
@@ -7,9 +9,16 @@
 
 ///IsHealthLow
 Status IsHealthLow::Update() {
+	std::cout << "Behavior 'IsHealthLow' updated!" << std::endl;
 	if (m_pBot->pBotInfo->iHealth < 50) {
+		std::cout << "Health low!" << std::endl;
+		if (m_pBot->e_CurrentTarget != TYPE_HEALTH_PICKUP) {
+			m_pBot->ChangeTarget(TYPE_HEALTH_PICKUP);
+		}
 		return BH_SUCCESS;
 	}
+
+	return BH_FAILURE;
 }
 
 
@@ -57,7 +66,7 @@ void FollowPathToHealthPickup::OnInitialize() {
 	m_pBot->pBotInfo->moveDirection = m_pBot->pBotInfo->moveDirection * 0;
 }
 
-Status CreatePathToHealthPickup::Update() {
+Status FollowPathToHealthPickup::Update() {
 	if (m_pBot->path.empty()) {
 		return BH_SUCCESS;
 	}

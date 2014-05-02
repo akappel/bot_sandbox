@@ -8,8 +8,9 @@
 #include <algorithm>
 #include <list>
 #include "PathPlanner.h"
+#include "Bot.h"
 
-struct enemyBot {
+/*struct enemyBot {
 	//static int numEnemies;
 	sOtherEnts *pInfo;
 };
@@ -26,11 +27,11 @@ bool bInitialRun = true;
 
 //For time keeping
 float accum = 0.0f;
-const float NEW_PATH_DT = 0.5f;
+const float NEW_PATH_DT = 0.5f;*/
 
 void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColor,float));
 
-void InitEnemyBotArray(const sWorldInfo &mWorldInfo) {
+/*void InitEnemyBotArray(const sWorldInfo &mWorldInfo) {
 	//Get count of enemies
 	numEnemies = 0;
 	for (int i = 0; i < mWorldInfo.iNumOtherEnts; i++) {
@@ -49,9 +50,9 @@ void InitEnemyBotArray(const sWorldInfo &mWorldInfo) {
 			arrPos++;
 		}
 	}
-}
+}*/
 
-enemyBot FindNewEnemy(enemyBot currentEnemy, const sEntInfo &mEnt) {
+/*enemyBot FindNewEnemy(enemyBot currentEnemy, const sEntInfo &mEnt) {
 	//Set to first enemy in the set
 	currentEnemy = enemies[0];
 
@@ -67,7 +68,9 @@ enemyBot FindNewEnemy(enemyBot currentEnemy, const sEntInfo &mEnt) {
 	//TODO For some reason, the currentEnemy reverts to NULL, when this function returns.
 	//I thought the assignment above would work, but it doesn't seem so...
 	return currentEnemy;
-}
+}*/
+
+Bot * bot;
 
 extern "C" __declspec(dllexport)
 void dllmonsteraction(const float dt, 
@@ -75,7 +78,7 @@ void dllmonsteraction(const float dt,
 					  const sWorldInfo &mWorldInfo, 
 					  void (*DrawLine)(vec2,vec2,vColor,float))
 {
-	//Init array of enemy pointers
+	/*//Init array of enemy pointers
 	if (!enemies) {
 		InitEnemyBotArray(mWorldInfo);
 	}
@@ -132,35 +135,15 @@ void dllmonsteraction(const float dt,
 	mEnt.aimDirection = Normalize(currentEnemy.pInfo->pos - mEnt.pos);
 
 	//Set next command
-	mEnt.nextCommand = OP_SHOOT_FIREBALL;
+	mEnt.nextCommand = OP_SHOOT_FIREBALL;*/
 
-	/*
-	REQUIREMENTS:
-		-Get the data
-		-Pass data to python
-		-Get return data from python
-		-Update the data
-		-Repeat
-
-	Our data is actually passed by way of reference addresses; one to our bot and one for everything
-	else. In order to pass our data to the python interpreter, we'll need to package the data we need
-	into a single object and send it off. The thing about it is, a lot of the stuff doesn't change.
-	Checking if something has changed before creating a new package of it to send to Python is a lot
-	less taxing than just doing it, so checks should be in place to help with load times.
-
-	The python interpreter will be running a state machine in the background. This state machine
-	will receive the datagram from this function and update the bot's state. Then return updated
-	data to this function so that it in turn can update what it can update.
-
-	datagram = [mEnt + mWorldInfo + dt]
-
-	send(datagram) -> Py -> update_state_from_datagram -> update_bot_data -> return new_datagram [mEnt] -> 
-		-> dllmonsteraction -> updatemEnt
-	
-
-	*/
-
-	
+	//Start up the bot
+	if (!bot) { bot = new Bot(mEnt, mWorldInfo); }
+	//Tick it or ticket
+	bot->TickBT(dt);
+	// TODO
+	bot->Fire(dt);
+	bot->Move();
 
 	DrawAiPaths(mWorldInfo, DrawLine);
 }
@@ -287,7 +270,7 @@ void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColo
 	}*/
 
 	//Draw bot's path
-	for (std::list<vec2>::const_iterator it = path.begin(); it != path.end(); ++it) {
+	/*for (std::list<vec2>::const_iterator it = path.begin(); it != path.end(); ++it) {
 		std::list<vec2>::const_iterator it2 = it;
 		it2++;
 
@@ -297,7 +280,7 @@ void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColo
 
 		DrawLine((*it), (*it2), RED, 0.0f);
 
-	}
+	}*/
 
 
 	/*

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "DllEntry.h"
 #include "AStar.h"
 #include <list>
