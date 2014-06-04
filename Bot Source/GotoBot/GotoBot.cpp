@@ -10,67 +10,9 @@
 #include "PathPlanner.h"
 #include "Bot.h"
 
-/*struct enemyBot {
-	//static int numEnemies;
-	sOtherEnts *pInfo;
-};
-
-//Pointer for current Enemy
-enemyBot *enemies;
-int numEnemies;
-enemyBot currentEnemy;
-PathPlanner pathPlanner;
-std::list<vec2> path;
-
-//For initialization purposes
-bool bInitialRun = true;
-
-//For time keeping
-float accum = 0.0f;
-const float NEW_PATH_DT = 0.5f;*/
-
 void DrawAiPaths(const sWorldInfo &mWorldInfo,  void (*DrawLine)(vec2,vec2,vColor,float));
 
-/*void InitEnemyBotArray(const sWorldInfo &mWorldInfo) {
-	//Get count of enemies
-	numEnemies = 0;
-	for (int i = 0; i < mWorldInfo.iNumOtherEnts; i++) {
-		if (mWorldInfo.pOtherEnts[i].type == TYPE_ENEMY) {
-			numEnemies++;
-		}
-	}
-	//init enemy array to count size
-	enemies = new enemyBot[numEnemies];
-
-	//add the enemies to that array
-	int arrPos = 0;
-	for (int i = 0; i < mWorldInfo.iNumOtherEnts; i++) {
-		if (mWorldInfo.pOtherEnts[i].type == TYPE_ENEMY) {
-			enemies[arrPos].pInfo = &mWorldInfo.pOtherEnts[i];
-			arrPos++;
-		}
-	}
-}*/
-
-/*enemyBot FindNewEnemy(enemyBot currentEnemy, const sEntInfo &mEnt) {
-	//Set to first enemy in the set
-	currentEnemy = enemies[0];
-
-	//Find enemy with the lowest distance from our bot
-	for (int i = 1; i < numEnemies; i++) {
-		if (!enemies[i].pInfo->bIsInvincible) {
-			if (Length(enemies[i].pInfo->pos - mEnt.pos) < Length(currentEnemy.pInfo->pos - mEnt.pos)) {
-				currentEnemy = enemies[i];
-			}
-		}
-	}
-
-	//TODO For some reason, the currentEnemy reverts to NULL, when this function returns.
-	//I thought the assignment above would work, but it doesn't seem so...
-	return currentEnemy;
-}*/
-
-Bot * bot;
+Bot *bot;
 
 extern "C" __declspec(dllexport)
 void dllmonsteraction(const float dt, 
@@ -78,68 +20,10 @@ void dllmonsteraction(const float dt,
 					  const sWorldInfo &mWorldInfo, 
 					  void (*DrawLine)(vec2,vec2,vColor,float))
 {
-	/*//Init array of enemy pointers
-	if (!enemies) {
-		InitEnemyBotArray(mWorldInfo);
-	}
-
-	//Initilize the pathPlanner object
-	if (!pathPlanner.pEnt && !pathPlanner.pWorldInfo){
-		pathPlanner.pEnt = &mEnt;
-		pathPlanner.pWorldInfo = &mWorldInfo;
-	}
-
-	//Find a new enemy to attack, will happen on first pass
-	if (bInitialRun) {
-		currentEnemy = FindNewEnemy(currentEnemy, mEnt);
-		//Create path to enemy position using pathPlanner
-		pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
-		bInitialRun = false;
-	}
-
-	//If current enemy has died, find a new enemy
-	if (currentEnemy.pInfo->bIsInvincible) {
-		currentEnemy = FindNewEnemy(currentEnemy, mEnt);
-	}
-
-	//If our bot dies, create a new path ***WORKS
-	//if (mEnt.bIsInvincible) {
-	//	pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
-	//}
-
-	//Create new path every half-second, aka when accumulation of dt > .5
-	accum += dt;
-	if (accum > NEW_PATH_DT) {
-		pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
-		accum = 0.0f;
-	}
-	
-	//Make sure the path still has nodes to move towards. If not, generate new path
-	if (path.empty()) {
-		pathPlanner.CreatePathToPosition(currentEnemy.pInfo->pos, path);
-	}
-	
-	//Reset moveDirection to zero in preparation of new movement vector, if there is one
-	mEnt.moveDirection = mEnt.moveDirection * 0;
-	//If the bot has landed on the front node of the list, pop that node
-	if (pow(path.front().x - mEnt.pos.x, 2) + pow(path.front().y - mEnt.pos.y, 2) < 4) {
-		path.pop_front();
-	}
-	//Else move towards it
-	else {
-		vec2 desiredVel = Normalize(path.front() - mEnt.pos) * MAX_ENT_SPEED;
-		mEnt.moveDirection = desiredVel;
-	}
-
-	//Aim at the enemy
-	mEnt.aimDirection = Normalize(currentEnemy.pInfo->pos - mEnt.pos);
-
-	//Set next command
-	mEnt.nextCommand = OP_SHOOT_FIREBALL;*/
 
 	//Start up the bot
 	if (!bot) { bot = new Bot(mEnt, mWorldInfo); }
-	//Tick it or ticket
+	//Tick it or ticket. #punny #2cool4me
 	bot->TickBT(dt);
 	// TODO
 	bot->Fire(dt);
