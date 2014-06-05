@@ -16,13 +16,16 @@ Bot::~Bot() {
 void Bot::InitBT(const sEntInfo &bot, const sWorldInfo &world) {
 	//Set up BT for behaviors in HighLevelBehaviors
 	pBehaviorTree = new Selector();
+	pBehaviorTree->AddChild(new IsHealthLow(bot, world));
+
 }
 
 void Bot::TickBT(float dt) {
 	accum += dt;
 
 	if (accum > TICK_SPEED) {
-		pBehaviorTree->Tick();
+		if (pBehaviorTree->Tick() == BH_SUCCESS) std::cout << "pBehaviorTree returned SUCCESS." << std::endl;
+		else std::cout << "pBehaviorTree returned FAILURE. It found no relevant behaviors." << std::endl;
 		accum = 0;
 	}
 }

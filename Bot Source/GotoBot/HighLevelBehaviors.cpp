@@ -1,6 +1,4 @@
 #include "HighLevelBehaviors.h"
-#include "Bot.h"
-#include <iostream>
 
 //////////////////////////////////////////
 //***Grab Healthpickup***/////////////////
@@ -8,20 +6,21 @@
 //////////////////////////////////////////
 
 ///IsHealthLow
+IsHealthLow::IsHealthLow(const sEntInfo &bot, const sWorldInfo &world) {
+	botInfo = &bot;
+	worldInfo = &world;
+}
+
 Status IsHealthLow::Update() {
 	std::cout << "Behavior 'IsHealthLow' updated!" << std::endl;
-	if (m_pBot->pBotInfo->iHealth < 50) {
+	if (botInfo->iHealth < 50) {
 		std::cout << "Health low!" << std::endl;
-		if (m_pBot->e_CurrentTarget != TYPE_HEALTH_PICKUP) {
-			m_pBot->ChangeTarget(TYPE_HEALTH_PICKUP);
-		}
 		return BH_SUCCESS;
 	}
-
 	return BH_FAILURE;
 }
 
-
+/*
 ///FindClosestHealthPickup
 Status FindClosestHealthPickup::Update() {
 	//Search for closest healthpickup
@@ -88,3 +87,4 @@ void FollowPathToHealthPickup::OnTerminate(Status s) {
 	//Reset moveDirection to zero in preparation of new movement vector, if there is one
 	m_pBot->pBotInfo->moveDirection = m_pBot->pBotInfo->moveDirection * 0;
 }
+*/

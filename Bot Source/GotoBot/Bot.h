@@ -5,6 +5,7 @@
 #include "Behavior.h"
 #include "HighLevelBehaviors.h"
 #include <list>
+#include <iostream>
 
 /////////////////////////
 // Bot.h
@@ -14,8 +15,6 @@
 /*
 Purpose: The interface that encapsulates all of the bot's features.
 */
-
-class Selector;
 
 class Bot {
 public:
@@ -41,7 +40,6 @@ public:
 	//Tick the bot, which provides the delta time to utilities
 	void TickBT(float dt);
 	
-
 	//Initialize behavior tree
 	void InitBT(const sEntInfo &bot, const sWorldInfo &world);
 

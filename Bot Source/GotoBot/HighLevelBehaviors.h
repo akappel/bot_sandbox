@@ -2,28 +2,25 @@
 
 #include "Behavior.h"
 #include "DllEntry.h"
+#include <iostream>
 
 //////////////////////////////////////////
 //***Grab Healthpickup***/////////////////
 //Selector: Finds health if health is low
 //////////////////////////////////////////
 
-class Bot;
-
 ///IsHealthLow: Condition node
 //Return true if health is low
 class IsHealthLow : public Behavior {
 
 public:
-	IsHealthLow(Bot& b) : Behavior(b) {}
+	IsHealthLow(const sEntInfo &bot, const sWorldInfo &world);
 	~IsHealthLow() {}
 
-	virtual void OnInitialize() {}
-	virtual Status Update();
-	virtual void OnTerminate(Status) {}
+	Status Update();
 };
 
-
+/*
 ///FindClosestHealthPickup: Action node
 //Return true if health a health pickup is found. Also
 //sets a variable so that later Tasks can path to it.
@@ -69,3 +66,4 @@ public:
 	virtual Status Update();
 	virtual void OnTerminate(Status);
 };
+*/

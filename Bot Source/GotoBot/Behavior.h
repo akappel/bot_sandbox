@@ -16,11 +16,10 @@ enum Status {
 
 ///Behavior: Base class for actions, conditions, and composites.
 class Behavior {
-
 public:
 	Status m_eStatus;
-	sEntInfo *bot;
-	sWorldInfo *world;
+	const sEntInfo *botInfo;
+	const sWorldInfo *worldInfo;
 	
 public:
 	//Behavior() {}
