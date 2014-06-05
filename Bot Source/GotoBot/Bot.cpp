@@ -1,48 +1,28 @@
 #include "Bot.h"
 
-//////////////////////////////
-// Bot.cpp
-//////////////////////////////
-
-
-/////////////////////////////////////////////////////
-// Bot::Bot(sEntInfo &, const sWorldInfo &)
-/////////////////////////////////////////////////////
-Bot::Bot(sEntInfo & bot, const sWorldInfo & world) :
+Bot::Bot(sEntInfo &bot, const sWorldInfo &world) :
 pBotInfo(&bot), 
 pWorldInfo(&world)
 {
 	pPathPlanner = new PathPlanner(bot, world);
-	InitHighLevelBehaviors(*this);
-	//InitLowLevelBehaviors(*this);
+	InitBT(bot, world);
 }
 
-/////////////////////////////////////////////////////
-// Bot::~Bot()
-/////////////////////////////////////////////////////
 Bot::~Bot() {
 	delete pPathPlanner;
-	delete btHighLevel;
+	delete pBehaviorTree;
 }
 
-void Bot::InitHighLevelBehaviors(Bot& b) {
+void Bot::InitBT(const sEntInfo &bot, const sWorldInfo &world) {
 	//Set up BT for behaviors in HighLevelBehaviors
-	btHighLevel = new Selector();
-	Sequence *beh_GetHealthPickup = new Sequence();
-
-	beh_GetHealthPickup->AddChild(new IsHealthLow(b));
-	//beh_GetHealthPickup->AddChild(new FindClosestHealthPickup(b));
-	//beh_GetHealthPickup->AddChild(new CreatePathToHealthPickup(b));
-	//beh_GetHealthPickup->AddChild(new FollowPathToHealthPickup(b));
-
-	btHighLevel->AddChild(beh_GetHealthPickup);
+	pBehaviorTree = new Selector();
 }
 
 void Bot::TickBT(float dt) {
 	accum += dt;
 
-	if (accum > HERTZ) {
-		btHighLevel->Tick();
+	if (accum > TICK_SPEED) {
+		pBehaviorTree->Tick();
 		accum = 0;
 	}
 }
@@ -65,12 +45,4 @@ void Bot::Move() {
 			pBotInfo->moveDirection = desiredVel;
 		}
 	}
-}
-
-void Bot::ChangeTarget(eEntityTypes entity) {
-	//Change current target  to passed entity
-	e_CurrentTarget = entity;
-
-	//Calculate new path
-
 }

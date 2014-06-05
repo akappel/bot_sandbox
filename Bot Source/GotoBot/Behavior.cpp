@@ -50,6 +50,16 @@ void Composite::ClearChildren() {
 	m_Children.clear();
 }
 
+void Composite::AddChild(Behavior *child)
+{
+	m_Children.push_back(child);
+}
+
+void Composite::RemoveChild(Behavior *child)
+{
+	m_Children.remove(child);
+}
+
 
 /////////////////////////////////
 ///Sequence
@@ -68,10 +78,16 @@ Status Sequence::Update() {
 	}
 }
 
+void Sequence::OnInitialize()
+{
+	m_currentChild = m_Children.begin();
+}
+
 
 //////////////////////////////////
 ///Selector
 //////////////////////////////////
+
 Status Selector::Update() {
 	while (true) {
 		Status s = (*m_currentChild)->Tick();
@@ -84,4 +100,9 @@ Status Selector::Update() {
 			return BH_FAILURE;
 		}
 	}
+}
+
+void Selector::OnInitialize()
+{
+	m_currentChild = m_Children.begin();
 }

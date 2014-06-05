@@ -3,8 +3,6 @@
 #include <list>
 #include "DllEntry.h"
 
-class Bot;
-
 //Draws directly from BTSK, copyright alexjc
 
 enum Status {
@@ -19,13 +17,13 @@ enum Status {
 ///Behavior: Base class for actions, conditions, and composites.
 class Behavior {
 
-protected:
+public:
 	Status m_eStatus;
-	Bot* m_pBot;
+	sEntInfo *bot;
+	sWorldInfo *world;
 	
 public:
-	Behavior() {}
-	Behavior(Bot& b) : m_eStatus(BH_INVALID), m_pBot(&b) {}
+	//Behavior() {}
 	virtual ~Behavior() {}
 
 	virtual void OnInitialize() {}
@@ -33,7 +31,6 @@ public:
 	virtual void OnTerminate(Status) {}
 
 	Status Tick();
-
 	void Reset();
 	void Abort();
 
@@ -43,33 +40,19 @@ public:
 };
 
 
-///Decorator: Behavior wrapper for behaviors
-class Decorator : public Behavior {
-
-protected:
-	Behavior* m_pChild;
-
-public:
-	Decorator(Bot& b, Behavior* child) : m_pChild(child), Behavior(b) {}
-};
-
-
 ///Composite
 class Composite : public Behavior {
-
-protected:
+public:
 	typedef std::list<Behavior*> Behaviors;
 	Behaviors m_Children;
 
 public:
-	Composite() {}
-
 	virtual ~Composite() {
 		ClearChildren();
 	}
 
-	void AddChild(Behavior* child) { m_Children.push_back(child); }
-	void RemoveChild(Behavior* child) { m_Children.remove(child); }
+	void AddChild(Behavior *child);
+	void RemoveChild(Behavior *child);
 	void ClearChildren();
 
 };
@@ -79,27 +62,38 @@ public:
 class Sequence : public Composite {
 public:
 	Sequence() {}
-	virtual ~Sequence() {}
+	~Sequence() {}
 
-protected:
+public:
 	Behaviors::iterator m_currentChild;
 
-	virtual void OnInitialize() { m_currentChild = m_Children.begin(); }
-	virtual Status Update();
+	void OnInitialize();
+	Status Update();
 
 };
 
 
-///Sequence: return success at first child's success
+///Selector: return success at first child's success
 class Selector : public Composite {
 public:
 	Selector() {}
-	virtual ~Selector() {}
+	~Selector() {}
 
 protected:
 	Behaviors::iterator m_currentChild;
 
-	virtual void OnInitialize() { m_currentChild = m_Children.begin(); }
-	virtual Status Update();
+	void OnInitialize();
+	Status Update();
 
 };
+
+/*
+///Decorator: Behavior wrapper for behaviors
+class Decorator : public Behavior {
+
+protected:
+Behavior* m_pChild;
+
+public:
+Decorator(Bot& b, Behavior* child) : m_pChild(child), Behavior(b) {}
+};*/
